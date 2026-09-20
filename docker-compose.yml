@@ -1,8 +1,7 @@
-version: "3"
 services:
   postgres:
     image: library/postgres:13
-    container_name: postgres
+    container_name: library_postgres
     restart: on-failure
     environment:
       POSTGRES_USER: postgres
@@ -13,8 +12,58 @@ services:
       - ./postgres/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-# TODO добавить сервисы
+  gateway:
+    build: ./gateway
+    container_name: gateway_service
+    ports:
+      - "8080:8080"
+    environment:
+      - USER_SERVICE_URL=http://user-service:8050
+      - LIBRARY_SERVICE_URL=http://library-service:8060
+      - RESERVATION_SERVICE_URL=http://reservation-service:8070
+    depends_on:
+      - user-service
+      - library-service
+      - reservation-service
+
+  user-service:
+    build: ./user-service
+    container_name: user_service
+    ports:
+      - "8050:8050"
+    environment:
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  library-service:
+    build: ./library-service
+    container_name: library_service
+    ports:
+      - "8060:8060"
+    environment:
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  reservation-service:
+    build: ./reservation-service
+    container_name: reservation_service
+    ports:
+      - "8070:8070"
+    environment:
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   db-data:

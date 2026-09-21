@@ -48,7 +48,7 @@ jobs:
         uses: Romanow/google-sheet-autograder-marker@v1.0
         with:
           google_token: ${{secrets.GOOGLE_API_KEY}}
-          sheet_id: "1xkgjUX6Qmk7rdJG-QPOToav-HWWtthJjnShIKnw3oIY"
+          sheet_id: "1BBdJNiYe9bJ6b5eZvcl3EfHPXAPISkbtFnAWqY8cce8"
           homework_number: 2
           user_column: 'D'
           column_offset: 'F'

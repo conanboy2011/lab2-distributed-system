@@ -46,3 +46,6 @@ ON CONFLICT (book_uid) DO NOTHING;
 INSERT INTO library_books (book_id, library_id, available_count)
 VALUES (1, 1, 1)
 ON CONFLICT DO NOTHING;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO program;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO program;
+GRANT USAGE, CREATE ON SCHEMA public TO program;
